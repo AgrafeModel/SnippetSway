@@ -30,3 +30,15 @@
 *.exe
 *.out
 *.app
+
+# Build files
+build/
+dist/
+bin/
+
+# Ignore all log files
+*.log
+
+# VS Code
+.vscode/
+
