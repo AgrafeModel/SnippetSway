@@ -6,10 +6,12 @@ SnippetSway is a command line tool that allows you to manage your code snippets.
 
 ## Table of Contents
 
-- [Installation](#installation)
+- [Description](#description)
+- [Table of Contents](#table-of-contents)
+- [Build](#build)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+
+
 
 ## Build
 
