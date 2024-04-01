@@ -7,20 +7,29 @@
 #include <exception>
 #include <iostream>
 
-class Database {
+class Database
+{
 public:
-    Database();
-    Database(std::string file);
+
+    Database(bool *debug=nullptr);
+    Database(std::string file, bool *debug=nullptr);
     ~Database();
 
-    
-    bool executeQuery(const std::string query);
-    bool executeQuery(const std::string query,const std::vector<std::string>& params);
+    int executeQuery(const std::string query);
+    int executeQuery(const std::string query, const std::vector<std::string> &params);
+
+
+    // Debugging
+    void error(const std::string &msg)
+    {
+        if (_debug)
+            std::cerr << "[Error:sqlite] " << msg << std::endl;
+    }
 
 private:
     sqlite3 *db;
     std::string _file;
-
+    bool _debug = false;
 };
 
-#endif // DATABASE_H
+#endif 

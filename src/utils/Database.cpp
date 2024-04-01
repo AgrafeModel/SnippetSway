@@ -1,23 +1,31 @@
 #include "Database.h"
 
-Database::Database()
+Database::Database(bool *debug)
 {
+    if (debug != NULL)
+        _debug = *debug;
+
     _file = ":memory:";
     int r = sqlite3_open(_file.c_str(), &db);
     if (r != SQLITE_OK)
     {
         db = nullptr;
+        this->error("Failed to open the database");
         throw std::runtime_error("Failed to open the database");
     }
 }
 
-Database::Database(std::string file)
+Database::Database(std::string file, bool *debug)
 {
+    if (debug != NULL)
+        _debug = *debug;
+
     _file = file;
     int r = sqlite3_open(_file.c_str(), &db);
     if (r != SQLITE_OK)
     {
         db = nullptr;
+        this->error("Failed to open the database");
         throw std::runtime_error("Failed to open the database");
     }
 }
@@ -30,26 +38,27 @@ Database::~Database()
     }
 }
 
-bool Database::executeQuery(const std::string query)
+int Database::executeQuery(const std::string query)
 {
     char *errMsg;
     int r = sqlite3_exec(db, query.c_str(), nullptr, nullptr, &errMsg);
     if (r != SQLITE_OK)
     {
+        this->error("Error during the execution of the request: " + std::string(sqlite3_errmsg(db)));
         sqlite3_free(errMsg);
-        return false;
+        return sqlite3_errcode(db);
     }
-    return true;
+    return r;
 }
 
-bool Database::executeQuery(const std::string query, const std::vector<std::string> &params)
+int Database::executeQuery(const std::string query, const std::vector<std::string> &params)
 {
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK)
     {
-        std::cerr << "[Error:sqlite] Error during the preparation of the request" << std::endl;
-        return false;
+        this->error("Error during the preparation of the request: " + std::string(sqlite3_errmsg(db)));
+        return sqlite3_errcode(db);
     }
 
     // Bind query parameters
@@ -58,9 +67,9 @@ bool Database::executeQuery(const std::string query, const std::vector<std::stri
         rc = sqlite3_bind_text(stmt, i + 1, params[i].c_str(), -1, SQLITE_STATIC);
         if (rc != SQLITE_OK)
         {
-            std::cerr << "[Error:sqlite] Error during the biding of the request's parameters" << std::endl;
+            this->error("Error during the binding of the parameters: " + std::string(sqlite3_errmsg(db)));
             sqlite3_finalize(stmt);
-            return false;
+            return sqlite3_errcode(db);
         }
     }
 
@@ -68,11 +77,11 @@ bool Database::executeQuery(const std::string query, const std::vector<std::stri
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE)
     {
-        std::cerr << "[Error:sqlite] Error during the execution of the request" << std::endl;
+        this->error("Error during the execution of the request: " + std::string(sqlite3_errmsg(db)));
         sqlite3_finalize(stmt);
-        return false;
+        return sqlite3_errcode(db);
     }
 
     sqlite3_finalize(stmt);
-    return true;
+    return rc;
 }

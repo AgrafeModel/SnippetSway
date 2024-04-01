@@ -7,8 +7,23 @@ int main(int argc, char *argv[])
 {
   try
   {
-    Database db("DATABABSE.db");
-    SnippetManager snpm(db);
+    bool debug = false;
+
+    for (int i = 0; i < argc; i++)
+    {
+      if (std::string(argv[i]) == "-d")
+      {
+        debug = true;
+        break;
+      }
+    }
+
+
+
+    Database db("DATABASE.db",&debug);
+    SnippetManager snpm(&db);
+
+    snpm.newSnippet("Test","print('Helloworld')","py");
     
   }
   catch (std::exception e)

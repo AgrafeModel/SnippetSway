@@ -8,12 +8,12 @@
 
 class SnippetManager {
 public:
-  SnippetManager(Database db);
-  void newSnippet(const std::string &name, const std::string &code);
+  SnippetManager(Database *db);
+  void newSnippet(const std::string &name, const std::string &code,const std::string &language);
   void listSnippets();
 
 private:
-  Database _db;
+  Database *_db;
 
 };
 

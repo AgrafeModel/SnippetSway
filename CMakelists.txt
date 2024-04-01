@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(SnippetSway)
 
-
-
+# Définir la norme C++ à utiliser
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Ajouter tous les fichiers d'en-tête dans le répertoire "include"
 file(GLOB_RECURSE INCLUDE_FILES "include/*.h")
