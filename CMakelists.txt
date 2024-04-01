@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(SnippetSway)
+project(snippetsway)
 
 # Définir la norme C++ à utiliser
 set(CMAKE_CXX_STANDARD 20)
@@ -15,9 +15,9 @@ file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 
 
 # Créer l'exécutable
-add_executable(SnippetSway ${SOURCE_FILES})
-target_include_directories(SnippetSway PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(SnippetSway PRIVATE sqlite3)
+add_executable(snippetsway ${SOURCE_FILES})
+target_include_directories(snippetsway PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(snippetsway PRIVATE sqlite3)
 
 
 # build using make
