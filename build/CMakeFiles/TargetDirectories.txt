@@ -1,0 +1,4 @@
+/Users/corentindeguisne/projets/SnippetSway/build/CMakeFiles/SnippetSway.dir
+/Users/corentindeguisne/projets/SnippetSway/build/CMakeFiles/make.dir
+/Users/corentindeguisne/projets/SnippetSway/build/CMakeFiles/edit_cache.dir
+/Users/corentindeguisne/projets/SnippetSway/build/CMakeFiles/rebuild_cache.dir
