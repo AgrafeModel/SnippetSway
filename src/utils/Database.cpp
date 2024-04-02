@@ -38,22 +38,59 @@ Database::~Database()
     }
 }
 
-int Database::executeQuery(const std::string query)
+void Database::error(const std::string &msg)
 {
-    char *errMsg;
-    int r = sqlite3_exec(db, query.c_str(), nullptr, nullptr, &errMsg);
+    if (_debug)
+        std::cerr << "[Error:sqlite] " << msg << std::endl;
+}
+
+int Database::executeQuery(const std::string query, std::vector<std::vector<std::string>> *result)
+{
+    if (result != nullptr)
+        result->clear();
+
+    sqlite3_stmt *stmt;
+
+    // Prepare the query
+    int r = sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr);
     if (r != SQLITE_OK)
     {
-        this->error("Error during the execution of the request: " + std::string(sqlite3_errmsg(db)));
-        sqlite3_free(errMsg);
-        return sqlite3_errcode(db);
+        this->error("Failed to prepare the query");
+        throw std::runtime_error("Failed to prepare the query");
     }
+    // Execute the query
+    while ((r = sqlite3_step(stmt)) == SQLITE_ROW)
+    {
+        std::vector<std::string> row;
+        int numColumns = sqlite3_column_count(stmt);
+        for (int i = 0; i < numColumns; ++i)
+        {
+            const char *columnValue = (const char *)sqlite3_column_text(stmt, i);
+            row.push_back(columnValue != nullptr ? columnValue : "");
+        }
+        if (result != nullptr)
+            result->push_back(row);
+    }
+
+    if (r != SQLITE_DONE)
+    {
+        this->error("Failed to execute the query");
+        throw std::runtime_error("Failed to execute the query");
+    }
+
+    sqlite3_finalize(stmt);
     return r;
 }
 
-int Database::executeQuery(const std::string query, const std::vector<std::string> &params)
+int Database::executeQuery(const std::string query, const std::vector<std::string> &params, std::vector<std::vector<std::string>> *result)
 {
+
+    if (result != nullptr)
+        result->clear();
+
     sqlite3_stmt *stmt;
+
+    // Prepare the query
     int rc = sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK)
     {
@@ -74,12 +111,17 @@ int Database::executeQuery(const std::string query, const std::vector<std::strin
     }
 
     // Execute the query
-    rc = sqlite3_step(stmt);
-    if (rc != SQLITE_DONE)
+    while ((rc = sqlite3_step(stmt)) == SQLITE_ROW)
     {
-        this->error("Error during the execution of the request: " + std::string(sqlite3_errmsg(db)));
-        sqlite3_finalize(stmt);
-        return sqlite3_errcode(db);
+        std::vector<std::string> row;
+        int numColumns = sqlite3_column_count(stmt);
+        for (int i = 0; i < numColumns; ++i)
+        {
+            const char *columnValue = (const char *)sqlite3_column_text(stmt, i);
+            row.push_back(columnValue != nullptr ? columnValue : "");
+        }
+        if (result != nullptr)
+            result->push_back(row);
     }
 
     sqlite3_finalize(stmt);

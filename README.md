@@ -11,8 +11,6 @@ SnippetSway is a command line tool that allows you to manage your code snippets.
 - [Build](#build)
 - [Usage](#usage)
 
-
-
 ## Build
 
 To build the project, you need to have CMake installed.
@@ -24,7 +22,7 @@ make -C build
 
 ## Usage
 
-You can run the program by executing the program in the build directory.
+Get the help message:
 ```bash
-snippetsway --help
+snippetsway -h
 ```
