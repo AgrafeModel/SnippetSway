@@ -1,4 +1,7 @@
-# SnippetSway
+# SnippetSway SNW
+ 
+<img src="./assets/icon.png" width="50%" height="50%"
+alt="SnippetSway Icon"/>
 
 ## Description
 
