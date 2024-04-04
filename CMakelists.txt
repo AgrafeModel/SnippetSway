@@ -9,16 +9,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 file(GLOB_RECURSE INCLUDE_FILES "include/*.h")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-
 # Ajouter tous les fichiers source dans le répertoire "src"
 file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
-
 
 # Créer l'exécutable
 add_executable(snippetsway ${SOURCE_FILES})
 target_include_directories(snippetsway PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(snippetsway PRIVATE sqlite3)
-
 
 # build using make
 add_custom_target(make

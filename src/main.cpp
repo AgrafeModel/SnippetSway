@@ -5,19 +5,10 @@
 #include "Database.h"
 #include "SnippetManager.h"
 
-void displayHelp();
-bool confirm(std::string what)
-{
-  std::cout << "Are you sure you want to " << what << "? [y/n]: ";
-  char c;
-  std::cin >> c;
-  if (c != 'y' && c != 'Y')
-  {
-    std::cout << "Operation canceled" << std::endl;
-    return false;
-  }
-  return true;
-}
+void DHM();
+bool confirm(std::string what);
+void PHL(std::string option, std::string description);
+
 
 int main(int argc, char *argv[])
 {
@@ -28,7 +19,7 @@ int main(int argc, char *argv[])
     SnippetManager snpm(&db);
 
     int opt;
-    while ((opt = getopt_long(argc, argv, "dhln:r:", nullptr, nullptr)) != -1)
+    while ((opt = getopt_long(argc, argv, "dhli:n:r:", nullptr, nullptr)) != -1)
     {
       switch (opt)
       {
@@ -36,7 +27,7 @@ int main(int argc, char *argv[])
         debug = true;
         break;
       case 'h':
-        displayHelp();
+        DHM();
         break;
       case 'l':
         snpm.listSnippets();
@@ -63,9 +54,15 @@ int main(int argc, char *argv[])
         }
         break;
       case 'r':
-
-        /* USER CONFIRMATION */
-
+        if (std::string(optarg).find("--all") != std::string::npos)
+        {
+          if (confirm("delete all snippets") == false)
+          {
+            break;
+          }
+          snpm.deleteAllSnippets();
+          break;
+        }
         if (confirm("delete the snippet") == false)
         {
           break;
@@ -81,6 +78,23 @@ int main(int argc, char *argv[])
         }
 
         break;
+
+      case 'i':
+        if (argc < 4)
+        {
+          std::cerr << "Not enough arguments" << std::endl;
+          return 1;
+        }
+        if (std::string(optarg).find_first_not_of("0123456789") == std::string::npos)
+        {
+          snpm.insertSnippetInFile(std::stoi(optarg), argv[optind], std::stoi(argv[optind + 1]));
+        }
+        else
+        {
+          snpm.insertSnippetInFile(optarg, argv[optind], std::stoi(argv[optind + 1]));
+        }
+        break;
+      
       default:
         std::cerr << "Unknown option: " << opt << std::endl;
         return 1;
@@ -96,21 +110,39 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-void displayHelp()
+/**
+ * @brief Print Help Line
+*/
+void PHL(std::string option, std::string description)
 {
-  std::cout << std::setw(50) << std::left << "Option"
-            << std::setw(50) << std::left << "Description" << std::endl;
-  std::cout << std::setw(50) << std::left << "-------"
-            << std::setw(50) << std::left << "------------" << std::endl;
-  std::cout << std::setw(50) << std::left << "-h"
-            << std::setw(50) << std::left << "Display this help message" << std::endl;
+  std::cout << std::setw(100) << std::left << option
+            << std::setw(100) << std::left << description << std::endl;
+}
 
-  std::cout << std::setw(50) << std::left << "-n [name] [code] [language]"
-            << std::setw(50) << std::left << "Create a new snippet" << std::endl;
-  std::cout << std::setw(50) << std::left << "-n --file [name] [filepath] [start_line] [end_line]"
-            << std::setw(50) << std::left << "Create a new snippet from a file" << std::endl;
-  std::cout << std::setw(50) << std::left << "-l"
-            << std::setw(50) << std::left << "List all snippets" << std::endl;
-  std::cout << std::setw(50) << std::left << "-r [name] | [id]"
-            << std::setw(50) << std::left << "Remove a snippet" << std::endl;
+
+/**
+ * @brief Display Help Message
+*/ 
+void DHM()
+{
+  PHL("-h", "Display this help message");
+  PHL("-n [name] [code] [language]", "Create a new snippet");
+  PHL("-n --file [name] [filepath] [start_line] [end_line]", "Create a new snippet from a file");
+  PHL("-l", "List all snippets");
+  PHL("-r [name] | [id]", "Remove a snippet");
+  PHL("-r --all", "Remove all snippets");
+  PHL("-i [name] | [id] [filepath] [line]", "Insert a snippet into a file at the specified line");
+}
+
+bool confirm(std::string what)
+{
+  std::cout << "Are you sure you want to " << what << "? [y/n]: ";
+  char c;
+  std::cin >> c;
+  if (c != 'y' && c != 'Y')
+  {
+    std::cout << "Operation canceled" << std::endl;
+    return false;
+  }
+  return true;
 }

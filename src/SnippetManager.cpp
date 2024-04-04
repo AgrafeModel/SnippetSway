@@ -111,6 +111,21 @@ void SnippetManager::listSnippets()
   }
 }
 
+int SnippetManager::deleteAllSnippets(){
+  int r = _db->executeQuery("DELETE * FROM snippets");
+  if (r == SQLITE_DONE)
+  {
+    std::cout << "All snippets deleted successfully" << std::endl;
+  }
+  else
+  {
+    std::cout << "[Error] An error occurred while deleting the snippets: " << r << std::endl;
+  }
+
+  return r;
+
+}
+
 int SnippetManager::newSnippetFromFile(const std::string &name,const std::string &file, int ls, int le){
   if (name.empty() || file.empty())
   {
@@ -164,4 +179,41 @@ int SnippetManager::newSnippetFromFile(const std::string &name,const std::string
   }
   
   return r;
+}
+
+int SnippetManager::insertSnippetInFile(const std::string &name, const std::string &file, int line){
+  std::ifstream f(file);
+  if (!f.is_open())
+  {
+    std::cout << "[Error] The file does not exist" << std::endl;
+    return 0;
+  }
+
+  std::cout << line << std::endl;
+
+  //get the code snippet from db
+  std::vector<std::string> params = {name};
+  std::vector<std::vector<std::string>> result;
+  int r = _db->executeQuery("SELECT code FROM snippets WHERE title = ?", params, &result);
+  if (r != SQLITE_DONE)
+  {
+    std::cout << "[Error] An error occurred while fetching the snippet: " << r << std::endl;
+    return r;
+  }
+  if (result.size() == 0)
+  {
+    std::cout << "Snippet not found" << std::endl;
+    return 0;
+  }
+
+  //
+
+
+
+  f.close();
+  return 1;
+}
+int SnippetManager::insertSnippetInFile(const int id, const std::string &file, int line){
+
+  return 1;
 }
