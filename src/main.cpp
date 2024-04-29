@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
             std::cerr << "Not enough arguments" << std::endl;
             return 1;
           }
-          snpm.newSnippet(argv[optind], argv[optind + 1], argv[optind + 2]);
+          snpm.newSnippet(optarg, argv[optind], argv[optind + 1]);
         }
         break;
       case 'r':
@@ -87,11 +87,11 @@ int main(int argc, char *argv[])
         }
         if (std::string(optarg).find_first_not_of("0123456789") == std::string::npos)
         {
-          snpm.insertSnippetInFile(std::stoi(optarg), argv[optind], std::stoi(argv[optind + 1]));
+          snpm.insertSnippetInFile(std::stoi(optarg), argv[optind], std::stoi(argv[optind + 1])-1);
         }
         else
         {
-          snpm.insertSnippetInFile(optarg, argv[optind], std::stoi(argv[optind + 1]));
+          snpm.insertSnippetInFile(optarg, argv[optind], std::stoi(argv[optind + 1])-1);
         }
         break;
       

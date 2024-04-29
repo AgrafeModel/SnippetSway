@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <exception>
+#include <vector>
 
 class FileManager
 {
@@ -14,11 +15,13 @@ public:
 
 
 
-    int insertInFile(std::string data,int line);
-private:
-    std::string _filepath;
-    std::fstream _fs;
-};
 
+    int insertInFile(std::string data, int line);
+
+private:
+    std::string _filepath; 
+    std::fstream _fs;      // filestream
+
+};
 
 #endif

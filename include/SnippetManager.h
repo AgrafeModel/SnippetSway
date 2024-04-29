@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <fstream>
 #include "Database.h"
+#include "FileManager.h"
 
 class SnippetManager
 {
@@ -67,6 +68,10 @@ public:
    * @return void
    */
   void listSnippets();
+
+
+  void getSnippet(const std::string &name);
+  void getSnippet(const int id);
 
   int insertSnippetInFile(const std::string &name, const std::string &file, int line = 0);
   int insertSnippetInFile(const int id, const std::string &file, int line = 0);
